@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Starscape Ore Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    h2, h3 { margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    th, td { padding: 8px; text-align: center; border: 1px solid #ccc; }
+    input[type=number] { width: 60px; }
+    .ore-name { text-align: left; }
+    button { padding: 10px 20px; font-size: 16px; }
+  </style>
+</head>
+<body>
+
+  <h2>Starscape Ore Calculator</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="ore-name">Ore Type</th>
+        <th>Inferior (1x)</th>
+        <th>Normal (2x)</th>
+        <th>Superior (3x)</th>
+        <th>Pristine (4x)</th>
+        <th>Total Refined</th>
+      </tr>
+    </thead>
+    <tbody id="oreTable">
+      <!-- Rows will be injected here -->
+    </tbody>
+  </table>
+
+  <button onclick="calculateAll()">Calculate Totals</button>
+
+  <h3>Grand Total Refined Material: <span id="grandTotal">0</span></h3>
+
+  <script>
+    const oreTypes = ["Korrelite", "Gellium", "Reknite", "Axnit"];
+
+    function createTableRows() {
+      const table = document.getElementById('oreTable');
+      oreTypes.forEach(ore => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="ore-name">${ore}</td>
+          <td><input type="number" min="0" value="0" id="${ore}-inferior"></td>
+          <td><input type="number" min="0" value="0" id="${ore}-normal"></td>
+          <td><input type="number" min="0" value="0" id="${ore}-superior"></td>
+          <td><input type="number" min="0" value="0" id="${ore}-pristine"></td>
+          <td><span id="${ore}-total">0</span></td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function calculateAll() {
+      let grandTotal = 0;
+      oreTypes.forEach(ore => {
+        const i = parseInt(document.getElementById(`${ore}-inferior`).value) || 0;
+        const n = parseInt(document.getElementById(`${ore}-normal`).value) || 0;
+        const s = parseInt(document.getElementById(`${ore}-superior`).value) || 0;
+        const p = parseInt(document.getElementById(`${ore}-pristine`).value) || 0;
+
+        const total = i * 1 + n * 2 + s * 3 + p * 4;
+        document.getElementById(`${ore}-total`).textContent = total;
+        grandTotal += total;
+      });
+
+      document.getElementById('grandTotal').textContent = grandTotal;
+    }
+
+    createTableRows();
+  </script>
+
+</body>
+</html>

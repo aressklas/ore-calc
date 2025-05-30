@@ -1,13 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Starscape Ore Calculator (with shorthand and quantities)</title>
+  <title>Starscape Ore Calculator (Dark Mode)</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 700px; margin: auto; }
-    textarea { width: 100%; height: 180px; margin-bottom: 10px; font-family: monospace; }
-    button { padding: 10px 20px; font-size: 16px; }
-    h3 { margin-top: 20px; }
-    pre { background: #f0f0f0; padding: 10px; white-space: pre-wrap; }
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 700px;
+      margin: auto;
+    }
+    textarea {
+      width: 100%;
+      height: 180px;
+      margin-bottom: 10px;
+      font-family: monospace;
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #333;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #555;
+    }
+    h2, h3, p, pre {
+      color: #e0e0e0;
+    }
+    pre {
+      background: #1e1e1e;
+      padding: 10px;
+      white-space: pre-wrap;
+      border-radius: 4px;
+      border: 1px solid #333;
+    }
   </style>
 </head>
 <body>
@@ -27,7 +64,6 @@ v P</pre>
   <pre id="results"></pre>
 
   <script>
-    // Map shorthand and full names (lowercase) to canonical full ore names
     const oreMap = {
       r: 'reknite',
       reknite: 'reknite',
@@ -59,4 +95,53 @@ v P</pre>
         return;
       }
 
-      con
+      const lines = input.split("\n");
+      const oreTotals = {};
+      let grandTotal = 0;
+      let output = "";
+
+      lines.forEach(line => {
+        const parts = line.trim().split(/\s+/);
+        if (parts.length < 2) return;
+
+        const oreInput = parts[0].toLowerCase();
+        const tier = parts[1].toUpperCase();
+        let quantity = 1;
+
+        if (!tierValues[tier]) return;
+
+        if (parts.length >= 3) {
+          const q = parseInt(parts[2]);
+          if (!isNaN(q) && q > 0) quantity = q;
+        }
+
+        const ore = oreMap[oreInput];
+        if (!ore) return;
+
+        const value = tierValues[tier] * quantity;
+
+        if (!oreTotals[ore]) oreTotals[ore] = 0;
+        oreTotals[ore] += value;
+        grandTotal += value;
+      });
+
+      if (Object.keys(oreTotals).length === 0) {
+        document.getElementById("results").textContent = "No valid ores detected.";
+        return;
+      }
+
+      for (const ore in oreTotals) {
+        output += `${capitalize(ore)}: ${oreTotals[ore]} refined\n`;
+      }
+
+      output += `\nTotal Refined Material: ${grandTotal}`;
+      document.getElementById("results").textContent = output;
+    }
+
+    function capitalize(text) {
+      return text.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    }
+  </script>
+
+</body>
+</html>
